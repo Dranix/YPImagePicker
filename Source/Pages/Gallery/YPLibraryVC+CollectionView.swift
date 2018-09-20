@@ -7,9 +7,42 @@
 //
 
 import UIKit
+import Photos
 
 extension YPLibraryVC {
-    var isLimitExceeded: Bool { return selection.count >= YPConfig.library.maxNumberOfItems }
+    var maxNumbersOfItems: Int{
+        var maxNumbersOfItems = YPConfig.library.maxNumberOfItems
+        
+        if(YPConfig.library.mediaType == .photoOrVideo){
+            let selectedAssets: [PHAsset] = self.selection.map {
+                return (self.mediaManager.fetchResult[$0.index])
+            }
+            
+            if let previousSelectedAsset = selectedAssets.first{
+                if(previousSelectedAsset.mediaType == .video){
+                    maxNumbersOfItems = 1
+                }
+            }
+        }
+        
+        return maxNumbersOfItems
+    }
+    
+    var isLimitExceeded: Bool {
+        return selection.count >= maxNumbersOfItems
+    }
+    
+    var previousMediaType: PHAssetMediaType?{
+        let selectedAssets: [PHAsset] = self.selection.map {
+            return (self.mediaManager.fetchResult[$0.index])
+        }
+        
+        return selectedAssets.first?.mediaType
+    }
+    
+    var currentMediaType: PHAssetMediaType?{
+        return self.mediaManager.selectedAsset?.mediaType
+    }
     
     func setupCollectionView() {
         v.collectionView.dataSource = self
@@ -79,6 +112,12 @@ extension YPLibraryVC {
     
     /// Checks if there can be selected more items. If no - present warning.
     func checkLimit() {
+        if(currentMediaType == .video){
+            v.maxNumberWarningLabel.text = String(format: "The limit is %d video", maxNumbersOfItems)
+        }else{
+            v.maxNumberWarningLabel.text = String(format: "The limit is %d photos", maxNumbersOfItems)
+        }
+        
         v.maxNumberWarningView.isHidden = !isLimitExceeded || multipleSelectionEnabled == false
     }
 }
@@ -100,16 +139,16 @@ extension YPLibraryVC: UICollectionViewDelegate {
         }
         cell.representedAssetIdentifier = asset.localIdentifier
         cell.multipleSelectionIndicator.selectionColor = YPConfig.colors.multipleItemsSelectedCircleColor
-                                                            ?? YPConfig.colors.tintColor
+            ?? YPConfig.colors.tintColor
         mediaManager.imageManager?.requestImage(for: asset,
-                                   targetSize: v.cellSize(),
-                                   contentMode: .aspectFill,
-                                   options: nil) { image, _ in
-                                    // The cell may have been recycled when the time this gets called
-                                    // set image only if it's still showing the same asset.
-                                    if cell.representedAssetIdentifier == asset.localIdentifier && image != nil {
-                                        cell.imageView.image = image
-                                    }
+                                                targetSize: v.cellSize(),
+                                                contentMode: .aspectFill,
+                                                options: nil) { image, _ in
+                                                    // The cell may have been recycled when the time this gets called
+                                                    // set image only if it's still showing the same asset.
+                                                    if cell.representedAssetIdentifier == asset.localIdentifier && image != nil {
+                                                        cell.imageView.image = image
+                                                    }
         }
         
         let isVideo = (asset.mediaType == .video)
@@ -124,7 +163,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
         } else {
             cell.multipleSelectionIndicator.set(number: nil)
         }
-
+        
         // Prevent weird animation where thumbnail fills cell on first scrolls.
         UIView.performWithoutAnimation {
             cell.layoutIfNeeded()
@@ -135,7 +174,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let previouslySelectedIndexPath = IndexPath(row: currentlySelectedIndex, section: 0)
         currentlySelectedIndex = indexPath.row
-
+        
         // If this is the only selected cell, do not deselect.
         if selection.count == 1 && selection.first?.index == indexPath.row {
             return
@@ -149,9 +188,28 @@ extension YPLibraryVC: UICollectionViewDelegate {
             collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
         }
         v.refreshImageCurtainAlpha()
-
+        
+        if(YPConfig.library.mediaType == .photoOrVideo){
+            if selection.count == 1 && multipleSelectionEnabled{
+                if(previousMediaType != currentMediaType) || (previousMediaType == .video && currentMediaType == .video){
+                    let previouslySelectedIndices = selection
+                    selection.removeAll()
+                    if let selectedRow = previouslySelectedIndices.first?.index {
+                        let previouslySelectedIndexPath = IndexPath(row: selectedRow, section: 0)
+                        collectionView.reloadItems(at: [previouslySelectedIndexPath])
+                    }
+                    
+                    addToSelection(indexPath: indexPath)
+                    
+                    collectionView.reloadItems(at: [indexPath])
+                    collectionView.reloadItems(at: [previouslySelectedIndexPath])
+                    
+                    return
+                }
+            }
+        }
+        
         if multipleSelectionEnabled {
-            
             let cellIsInTheSelectionPool = isInSelectionPull(indexPath: indexPath)
             let cellIsCurrentlySelected = previouslySelectedIndexPath.row == currentlySelectedIndex
             
@@ -159,7 +217,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
                 if cellIsCurrentlySelected {
                     deselect(indexPath: indexPath)
                 }
-            } else if isLimitExceeded == false {
+            } else if isLimitExceeded == false && previousMediaType == currentMediaType{
                 addToSelection(indexPath: indexPath)
             }
         } else {
@@ -192,11 +250,11 @@ extension YPLibraryVC: UICollectionViewDelegateFlowLayout {
         let width = (collectionView.frame.width - margins) / CGFloat(YPConfig.library.numberOfItemsInRow)
         return CGSize(width: width, height: width)
     }
-
+    
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return YPConfig.library.spacingBetweenItems
     }
-
+    
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return YPConfig.library.spacingBetweenItems
     }
