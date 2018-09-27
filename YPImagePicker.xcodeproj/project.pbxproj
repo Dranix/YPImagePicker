@@ -92,6 +92,8 @@
 		EBD66105208104EA00EA276E /* YPIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD66104208104EA00EA276E /* YPIcons.swift */; };
 		EBD66107208104F400EA276E /* YPColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD66106208104F400EA276E /* YPColors.swift */; };
 		EBE6CA48210389ED005B0A6A /* CIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE6CA47210389ED005B0A6A /* CIImage+Extensions.swift */; };
+		FA7D3E25215CA7BE008813A4 /* UIButton+TintColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7D3E24215CA7BE008813A4 /* UIButton+TintColor.swift */; };
+		FA7D3E28215CA805008813A4 /* ButtonWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7D3E27215CA805008813A4 /* ButtonWithImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -195,6 +197,8 @@
 		EBD66104208104EA00EA276E /* YPIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPIcons.swift; sourceTree = "<group>"; };
 		EBD66106208104F400EA276E /* YPColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPColors.swift; sourceTree = "<group>"; };
 		EBE6CA47210389ED005B0A6A /* CIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CIImage+Extensions.swift"; sourceTree = "<group>"; };
+		FA7D3E24215CA7BE008813A4 /* UIButton+TintColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+TintColor.swift"; sourceTree = "<group>"; };
+		FA7D3E27215CA805008813A4 /* ButtonWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWithImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -255,6 +259,7 @@
 		99019E542018CECC007325C2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				FA7D3E26215CA7EE008813A4 /* View */,
 				EB473E2C208E1ED800D16105 /* Extensions */,
 				99C6D6B11F1FB5C100711DB2 /* YPHelper.swift */,
 				99C6D6B41F1FB5C100711DB2 /* YPPhotoSaver.swift */,
@@ -398,6 +403,7 @@
 				EB867BCE209134F100332A54 /* UIColor+Extensions.swift */,
 				EB5B07C3209146F00099C1FA /* UIButton+Extensions.swift */,
 				EB65C4B4209321420037858B /* String+Extensions.swift */,
+				FA7D3E24215CA7BE008813A4 /* UIButton+TintColor.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -453,6 +459,14 @@
 				99278DAD205140F60059532E /* YPPermissionDeniedPopup.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		FA7D3E26215CA7EE008813A4 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FA7D3E27215CA805008813A4 /* ButtonWithImage.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -618,6 +632,8 @@
 				99A0529A1F20A19B005600B3 /* YPAlbumVC.swift in Sources */,
 				99A0529D1F20B45D005600B3 /* YPAlbumView.swift in Sources */,
 				EB473E21208E1BF400D16105 /* YPTrimError.swift in Sources */,
+				FA7D3E25215CA7BE008813A4 /* UIButton+TintColor.swift in Sources */,
+				FA7D3E28215CA805008813A4 /* ButtonWithImage.swift in Sources */,
 				EB584C03207B990200265B38 /* AVFoundation+Extensions.swift in Sources */,
 				99C6D6BF1F1FB5C100711DB2 /* YPGridView.swift in Sources */,
 				99C6D6D01F1FB5C100711DB2 /* YPVideoCaptureVC.swift in Sources */,

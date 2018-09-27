@@ -18,14 +18,16 @@ class YPAssetViewContainer: UIView {
     public let curtain = UIView()
     public let spinnerView = UIView()
     public let squareCropButton = UIButton()
-    public let multipleSelectionButton = UIButton()
+    public let multipleSelectionButton = ButtonWithImage()
     public var onlySquare = YPConfig.library.onlySquare
     public var isShown = true
     
     private let spinner = UIActivityIndicatorView(activityIndicatorStyle: .white)
     private var shouldCropToSquare = false
     private var isMultipleSelection = false
-
+    private var multipleSelectionOnColor =  UIColor(red: 65/255.0, green: 142/255.0, blue: 231/255.0, alpha: 0.9)
+    private var multipleSelectionOffColor =  UIColor.gray.withAlphaComponent(0.9)
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -77,9 +79,13 @@ class YPAssetViewContainer: UIView {
         
         // Multiple selection button
         sv(multipleSelectionButton)
-        multipleSelectionButton.size(42)
-        multipleSelectionButton-15-|
-        multipleSelectionButton.setImage(YPConfig.icons.multipleSelectionOffIcon, for: .normal)
+        multipleSelectionButton.width(150)
+        multipleSelectionButton.height(42)
+        multipleSelectionButton-10-|
+        multipleSelectionButton.setTitle("Select Multiple", for: .normal)
+        multipleSelectionButton.titleLabel?.font = UIFont(name: "AvenirNext-Bold", size: 13.0)
+        multipleSelectionButton.setTintColor(withColor: UIColor.white, withImage: YPConfig.icons.myMultipleSelectionIcon)
+        multipleSelectionButton.backgroundColor = multipleSelectionOffColor
         multipleSelectionButton.Bottom == zoomableView!.Bottom - 15
         
     }
@@ -110,12 +116,16 @@ class YPAssetViewContainer: UIView {
     }
     
     // MARK: - Multiple selection
-
+    
     /// Use this to update the multiple selection mode UI state for the YPAssetViewContainer
     public func setMultipleSelectionMode(on: Bool) {
+        //        let image = on ? YPConfig.icons.multipleSelectionOnIcon : YPConfig.icons.multipleSelectionOffIcon
+        //        multipleSelectionButton.setImage(image, for: .normal)
+        
         isMultipleSelection = on
-        let image = on ? YPConfig.icons.multipleSelectionOnIcon : YPConfig.icons.multipleSelectionOffIcon
-        multipleSelectionButton.setImage(image, for: .normal)
+        let color = on ? multipleSelectionOnColor : multipleSelectionOffColor
+        multipleSelectionButton.backgroundColor = color
+        
         refreshSquareCropButton()
     }
 }
