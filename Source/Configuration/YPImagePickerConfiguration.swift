@@ -177,6 +177,9 @@ public struct YPConfigLibrary {
 
     /// Allow to skip the selections gallery when selecting the multiple media items. Defaults to false.
     public var skipSelectionsGallery = false
+    
+    // Zero = no limit
+    public var maximumOfDisplayItems = 0
 }
 
 /// Encapsulates video specific settings.
