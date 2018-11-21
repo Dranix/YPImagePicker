@@ -215,5 +215,4 @@ public enum YPlibraryMediaType {
     case photo
     case video
     case photoAndVideo
-    case photoOrVideo
 }
