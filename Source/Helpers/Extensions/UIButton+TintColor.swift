@@ -12,7 +12,7 @@ import UIKit
 extension UIButton{
     func setTintColor(withColor color: UIColor, withImage image: UIImage?){
         if let unwrappedImage = image{
-            let tintedImage = unwrappedImage.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+            let tintedImage = unwrappedImage.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
             self.setImage(tintedImage, for: .normal)
             self.tintColor = color
         }

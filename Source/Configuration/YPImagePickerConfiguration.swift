@@ -215,16 +215,14 @@ public struct YPConfigLibrary {
     /// Allow to skip the selections gallery when selecting the multiple media items. Defaults to false.
     public var skipSelectionsGallery = false
     
-<<<<<<< HEAD
     // Zero = no limit
     public var maximumOfDisplayItems = 0
-=======
+
     /// Allow to preselected media items
     public var preselectedItems: [YPMediaItem]?
     
     /// Set the overlay type shown on top of the selected library item
     public var itemOverlayType: YPItemOverlayType = .grid
->>>>>>> 7c295c9f3dda0ea3312f5770baf1f782eb4478ce
 }
 
 /// Encapsulates video specific settings.
