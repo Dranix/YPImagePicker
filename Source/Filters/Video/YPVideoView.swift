@@ -65,7 +65,7 @@ public class YPVideoView: UIView {
     
     override public func layoutSubviews() {
         super.layoutSubviews()
-        playerLayer.frame = playerView.frame
+        playerLayer.frame = playerView.bounds
     }
     
     @objc internal func singleTap() {
@@ -74,7 +74,7 @@ public class YPVideoView: UIView {
     
     @objc public func playerItemDidReachEnd(_ note: Notification) {
         player.actionAtItemEnd = .none
-        player.seek(to: kCMTimeZero)
+        player.seek(to: CMTime.zero)
         player.play()
     }
 }
@@ -98,6 +98,7 @@ extension YPVideoView {
         
         playerLayer.player = player
         playerView.alpha = 1
+        setNeedsLayout()
     }
     
     /// Convenience func to pause or unpause video dependely of state
@@ -123,7 +124,7 @@ extension YPVideoView {
     
     public func stop() {
         player.pause()
-        player.seek(to: kCMTimeZero)
+        player.seek(to: CMTime.zero)
         showPlayImage(show: true)
         removeReachEndObserver()
     }

@@ -17,7 +17,7 @@ class YPAlbumCell: UITableViewCell {
     
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         let stackView = UIStackView()
@@ -41,7 +41,7 @@ class YPAlbumCell: UITableViewCell {
         thumbnail.contentMode = .scaleAspectFill
         thumbnail.clipsToBounds = true
         
-        title.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-        numberOfItems.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
+        title.font = YPConfig.fonts.albumCellTitleFont
+        numberOfItems.font = YPConfig.fonts.albumCellNumberOfItemsFont
     }
 }

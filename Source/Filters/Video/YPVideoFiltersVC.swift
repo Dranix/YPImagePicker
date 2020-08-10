@@ -46,6 +46,7 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = YPConfig.colors.filterBackgroundColor
         trimmerView.mainColor = YPConfig.colors.trimmerMainColor
         trimmerView.handleColor = YPConfig.colors.trimmerHandleColor
         trimmerView.positionBarColor = YPConfig.colors.positionLineColor
@@ -80,6 +81,7 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
                                                                style: .plain,
                                                                target: self,
                                                                action: #selector(cancel))
+            navigationItem.leftBarButtonItem?.setFont(font: YPConfig.fonts.leftBarButtonFont, forState: .normal)
         }
         setupRightBarButtonItem()
     }
@@ -110,6 +112,7 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
                                                             target: self,
                                                             action: #selector(save))
         navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
+        navigationItem.rightBarButtonItem?.setFont(font: YPConfig.fonts.rightBarButtonFont, forState: .normal)
     }
     
     // MARK: - Top buttons
@@ -121,7 +124,7 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         do {
             let asset = AVURLAsset(url: inputVideo.url)
             let trimmedAsset = try asset
-                .assetByTrimming(startTime: trimmerView.startTime ?? kCMTimeZero,
+                .assetByTrimming(startTime: trimmerView.startTime ?? CMTime.zero,
                                  endTime: trimmerView.endTime ?? inputAsset.duration)
             
             // Looks like file:///private/var/mobile/Containers/Data/Application
@@ -129,14 +132,24 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
             let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory())
                 .appendingUniquePathComponent(pathExtension: YPConfig.video.fileType.fileExtension)
             
-            try trimmedAsset.export(to: destinationURL) { [weak self] in
-                guard let strongSelf = self else { return }
-                
-                DispatchQueue.main.async {
-                    let resultVideo = YPMediaVideo(thumbnail: strongSelf.coverImageView.image!,
-                                                   videoURL: destinationURL, asset: strongSelf.inputVideo.asset)
-                    didSave(YPMediaItem.video(v: resultVideo))
-                    strongSelf.setupRightBarButtonItem()
+            _ = trimmedAsset.export(to: destinationURL) { [weak self] session in
+                switch session.status {
+                case .completed:
+                    DispatchQueue.main.async {
+                        if let coverImage = self?.coverImageView.image {
+                            let resultVideo = YPMediaVideo(thumbnail: coverImage,
+														   videoURL: destinationURL,
+														   asset: self?.inputVideo.asset)
+                            didSave(YPMediaItem.video(v: resultVideo))
+                            self?.setupRightBarButtonItem()
+                        } else {
+                            print("YPVideoFiltersVC -> Don't have coverImage.")
+                        }
+                    }
+                case .failed:
+                    print("YPVideoFiltersVC Export of the video failed. Reason: \(String(describing: session.error))")
+                default:
+                    print("YPVideoFiltersVC Export session completed with \(session.status) status. Not handled")
                 }
             }
         } catch let error {
@@ -230,8 +243,8 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         
         if playBackTime >= endTime {
             videoView.player.seek(to: startTime,
-                                  toleranceBefore: kCMTimeZero,
-                                  toleranceAfter: kCMTimeZero)
+                                  toleranceBefore: CMTime.zero,
+                                  toleranceAfter: CMTime.zero)
             trimmerView.seek(to: startTime)
         }
     }
@@ -240,7 +253,7 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
 // MARK: - TrimmerViewDelegate
 extension YPVideoFiltersVC: TrimmerViewDelegate {
     public func positionBarStoppedMoving(_ playerTime: CMTime) {
-        videoView.player.seek(to: playerTime, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
+        videoView.player.seek(to: playerTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
         videoView.play()
         startPlaybackTimeChecker()
         updateCoverPickerBounds()
@@ -249,7 +262,7 @@ extension YPVideoFiltersVC: TrimmerViewDelegate {
     public func didChangePositionBar(_ playerTime: CMTime) {
         stopPlaybackTimeChecker()
         videoView.pause()
-        videoView.player.seek(to: playerTime, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
+        videoView.player.seek(to: playerTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
     }
 }
 
